@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     for (i = 0; i < size; ++i) {
         vsread (fd, (void *) buffer, 1);
         c = (char) buffer[0];
-        c = c + 1;
+        c = c + 1; // just to do something
     }
     vsclose (fd);
     
