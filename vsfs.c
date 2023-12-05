@@ -81,7 +81,7 @@ int  vsmount (char *vdiskname)
 {
     // simply open the Linux file vdiskname and in this
     // way make it ready to be used for other operations.
-    // vdisk_fd is global; hence other function can use it. 
+    // vs_fd is global; hence other function can use it. 
     vs_fd = open(vdiskname, O_RDWR);
     
     // cache the FAT table in memory
