@@ -69,7 +69,7 @@ int vsformat (char *vdiskname, unsigned int m)
     //printf ("executing command = %s\n", command);
     system (command);
 
-    // now write the code to format the disk below.
+    // now write the code to format the disk.
     // .. your code...
     
     return (0); 
