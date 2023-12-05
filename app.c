@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     int fd1, fd2, fd; 
     int i;
     char c; 
-    char buffer[1024];
+    char buffer[2048];
     char buffer2[8] = {50, 50, 50, 50, 50, 50, 50, 50};
     int size;
     char vdiskname[200]; 
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
         vsappend (fd1, (void *) buffer, 1);
     }
 
-    for (i = 0; i < 10000; ++i) {
+    for (i = 0; i < 1000; ++i) {
         buffer[0] = (char) 65;
         buffer[1] = (char) 66;
         buffer[2] = (char) 67;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     vsclose(fd2);
 
     fd = vsopen("file3.bin", MODE_APPEND);
-    for (i = 0; i < 10000; ++i) {
+    for (i = 0; i < 1000; ++i) {
         memcpy (buffer, buffer2, 8); // just to show memcpy
         vsappend(fd, (void *) buffer, 8);
     }
