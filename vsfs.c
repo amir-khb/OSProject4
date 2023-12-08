@@ -79,15 +79,14 @@ int vsformat (char *vdiskname, unsigned int m)
 // this function is partially implemented.
 int  vsmount (char *vdiskname)
 {
-    // simply open the Linux file vdiskname and in this
+    // open the Linux file vdiskname and in this
     // way make it ready to be used for other operations.
     // vs_fd is global; hence other function can use it. 
     vs_fd = open(vdiskname, O_RDWR);
-    
-    // cache the FAT table in memory
-    // cache the root directory content in memory
-    // ...
-    
+    // load (chache) the superblock info from disk (Linux file) into memory
+    // load the FAT table from disk into memory
+    // load root directory from disk into memory
+    //...
     return(0);
 }
 
@@ -95,10 +94,11 @@ int  vsmount (char *vdiskname)
 // this function is partially implemented.
 int vsumount ()
 {
-    // write the in-memory versions of the FAT and roodir into virtual disk
-    //...
-    
-    fsync (vs_fd); // copy - flush - everything in memory to disk
+    // write superblock to virtual disk file
+    // write FAT to virtual disk file
+    // write root directory to virtual disk file
+
+    fsync (vs_fd); // synchronize kernel file cache with the disk
     close (vs_fd);
     return (0); 
 }
