@@ -15,7 +15,7 @@ app: 	app.c
 	gcc -Wall -o app app.c -L. -lvsfs
 
 clean: 
-	rm *.o  *~ libvsfs.aapp create_format
+	rm *.o *~ libvsfs.a app create_format
 
 cleanall: 
-	rm *.o  *~ libvsfs.aapp vdisk create_format
+	rm *.o *~ libvsfs.a app vdisk create_format
