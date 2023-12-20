@@ -49,7 +49,7 @@ int read_block (void *block, int k)
 {
     int n;
     int offset;
-    printf("in here");
+//    printf("in here");
     offset = k * BLOCKSIZE;
     lseek(vs_fd, (off_t) offset, SEEK_SET);
     n = read (vs_fd, block, BLOCKSIZE);
@@ -101,19 +101,13 @@ int vsformat (char *vdiskname, unsigned int m)
         return -1;
     }
 
-    Superblock sb;
-    sb.total_blocks = count;
-    sb.fat_start_block = 1; // Superblock is at block 0
-    sb.fat_blocks = 32;     // Number of blocks for FAT
-    sb.root_dir_start_block = sb.fat_start_block + sb.fat_blocks;
-    sb.root_dir_blocks = 8;
     superblock.total_blocks = count;
     superblock.fat_start_block = 1; // Superblock is at block 0
     superblock.fat_blocks = 32;     // Number of blocks for FAT
     superblock.root_dir_start_block = superblock.fat_start_block + superblock.fat_blocks;
     superblock.root_dir_blocks = 8;
 
-    if (write_block(&sb, 0) == -1) {
+    if (write_block(&superblock, 0) == -1) {
         printf("Error writing superblock\n");
         close(vs_fd);
         return -1;
@@ -135,8 +129,8 @@ int vsformat (char *vdiskname, unsigned int m)
     memset(root_dir, 0, sizeof(root_dir)); // Set all entries to 0 (empty)
 
     // Write Root Directory blocks to disk
-    for (int i = 0; i < sb.root_dir_blocks; ++i) {
-        if (write_block(root_dir + (i * 16), sb.root_dir_start_block + i) == -1) {
+    for (int i = 0; i < superblock.root_dir_blocks; ++i) {
+        if (write_block(root_dir + (i * 16), superblock.root_dir_start_block + i) == -1) {
             printf("Error writing root directory block %d\n", i);
             close(vs_fd);
             return -1;
