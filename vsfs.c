@@ -155,7 +155,7 @@ int  vsmount (char *vdiskname)
     // way make it ready to be used for other operations.
     // vs_fd is global; hence other function can use it.
 
-    vs_fd = open("disk1", O_RDWR);
+    vs_fd = open(vdiskname, O_RDWR);
 
     if (vs_fd == -1) {
         printf("Error opening virtual disk\n");
