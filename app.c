@@ -22,7 +22,7 @@ int main(int argc, char **argv)
         exit(0);
     }
     strcpy (vdiskname, argv[1]); 
-    
+    printf(vdiskname);
     ret = vsmount (vdiskname);
     if (ret != 0) {
         printf ("could not mount \n");
