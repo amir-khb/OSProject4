@@ -4,15 +4,15 @@
 all: libvsfs.a create_format app
 
 libvsfs.a: 	vsfs.c
-	gcc -Wall -c vsfs.c
+	gcc -fstack-protector -Wall -c vsfs.c
 	ar -cvq libvsfs.a vsfs.o
 	ranlib libvsfs.a
 
 create_format: create_format.c
-	gcc -Wall -o create_format  create_format.c   -L. -lvsfs
+	gcc -fstack-protector -Wall -o create_format  create_format.c   -L. -lvsfs
 
 app: 	app.c
-	gcc -Wall -o app app.c -L. -lvsfs
+	gcc -fstack-protector -Wall -o app app.c -L. -lvsfs
 
 clean: 
 	rm *.o *~ libvsfs.a app create_format

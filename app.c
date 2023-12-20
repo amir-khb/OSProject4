@@ -7,29 +7,32 @@
 int main(int argc, char **argv)
 {
     int ret;
-    int fd1, fd2, fd; 
+    int fd1, fd2, fd;
     int i;
-    char c; 
+    char c;
     char buffer[2048];
     char buffer2[8] = {50, 50, 50, 50, 50, 50, 50, 50};
     int size;
-    char vdiskname[200]; 
+    char vdiskname[200] ;
 
     printf ("started\n");
 
-    if (argc != 2) {
-        printf ("usage: app  <vdiskname>\n");
-        exit(0);
-    }
-    strcpy (vdiskname, argv[1]); 
-    printf(vdiskname);
+//    if (argc != 2) {
+//        printf ("usage: app  <vdiskname>\n");
+//        exit(0);
+//    }
+    strcpy (vdiskname, "disk1");
+
     ret = vsmount (vdiskname);
+
     if (ret != 0) {
         printf ("could not mount \n");
         exit (1);
+    } else{
+        printf("Mounted Successfully!\n");
     }
 
-    printf ("creating files\n"); 
+    printf ("creating files\n");
     vscreate ("file1.bin");
     vscreate ("file2.bin");
     vscreate ("file3.bin");
@@ -48,7 +51,7 @@ int main(int argc, char **argv)
         buffer[3] = (char) 68;
         vsappend(fd2, (void *) buffer, 4);
     }
-    
+
     vsclose(fd1);
     vsclose(fd2);
 
@@ -67,6 +70,6 @@ int main(int argc, char **argv)
         c = c + 1; // just to do something
     }
     vsclose (fd);
-    
+
     ret = vsumount();
 }
