@@ -17,13 +17,15 @@ int main(int argc, char **argv)
 
     printf ("started\n");
 
-//    if (argc != 2) {
-//        printf ("usage: app  <vdiskname>\n");
-//        exit(0);
-//    }
-    strcpy (vdiskname, "disk1");
+if (argc != 2) {
+        printf ("usage: app  <vdiskname>\n");
+        exit(0);
+    }
+    strcpy (vdiskname, argv[1]);
 
     ret = vsmount (vdiskname);
+//    print_superblock(); // Print the contents of the superblock
+
 
     if (ret != 0) {
         printf ("could not mount \n");
@@ -36,6 +38,8 @@ int main(int argc, char **argv)
     vscreate ("file1.bin");
     vscreate ("file2.bin");
     vscreate ("file3.bin");
+    printf("DONE");
+
 
     fd1 = vsopen ("file1.bin", MODE_APPEND);
     fd2 = vsopen ("file2.bin", MODE_APPEND);

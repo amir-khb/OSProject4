@@ -57,7 +57,7 @@ int read_block (void *block, int k)
 	printf ("read error\n");
 	return -1;
     }
-    return (0); 
+    return (0);
 }
 
 // write block k into the virtual disk. 
@@ -73,7 +73,7 @@ int write_block (void *block, int k)
 	printf ("write error\n");
 	return (-1);
     }
-    return 0; 
+    return 0;
 }
 
 
@@ -107,7 +107,12 @@ int vsformat (char *vdiskname, unsigned int m)
     sb.fat_blocks = 32;     // Number of blocks for FAT
     sb.root_dir_start_block = sb.fat_start_block + sb.fat_blocks;
     sb.root_dir_blocks = 8;
-    
+    superblock.total_blocks = count;
+    superblock.fat_start_block = 1; // Superblock is at block 0
+    superblock.fat_blocks = 32;     // Number of blocks for FAT
+    superblock.root_dir_start_block = superblock.fat_start_block + superblock.fat_blocks;
+    superblock.root_dir_blocks = 8;
+
     if (write_block(&sb, 0) == -1) {
         printf("Error writing superblock\n");
         close(vs_fd);
@@ -128,7 +133,7 @@ int vsformat (char *vdiskname, unsigned int m)
 
     DirectoryEntry root_dir[128]; // Assuming 128 entries, each 128 bytes
     memset(root_dir, 0, sizeof(root_dir)); // Set all entries to 0 (empty)
-    
+
     // Write Root Directory blocks to disk
     for (int i = 0; i < sb.root_dir_blocks; ++i) {
         if (write_block(root_dir + (i * 16), sb.root_dir_start_block + i) == -1) {
@@ -139,7 +144,7 @@ int vsformat (char *vdiskname, unsigned int m)
     }
 
     close(vs_fd);
-    return (0); 
+    return (0);
 }
 
 
@@ -157,25 +162,22 @@ int  vsmount (char *vdiskname)
         return -1;
     }
     // load (cache) the superblock info from disk (Linux file) into memory
-    Superblock sb;
-    if (read_block(&sb, 0) == -1) {
+    if (read_block(&superblock, 0) == -1) {
         printf("Error reading superblock\n");
         close(vs_fd);
         return -1;
     }
 
-    // // superblock = sb;
-    
      // load the FAT table from disk into memory
-     int fat_entries = (BLOCKSIZE / sizeof(int)) * sb.fat_blocks; // Calculate number of FAT entries
+     int fat_entries = (BLOCKSIZE / sizeof(int)) * superblock.fat_blocks; // Calculate number of FAT entries
      int *fat = malloc(fat_entries * sizeof(int));
      if (fat == NULL) {
          printf("Error allocating memory for FAT\n");
          close(vs_fd);
          return -1;
      }
-     for (int i = 0; i < sb.fat_blocks; ++i) {
-         if (read_block(fat + (i * (BLOCKSIZE / sizeof(int))), sb.fat_start_block + i) == -1) {
+     for (int i = 0; i < superblock.fat_blocks; ++i) {
+         if (read_block(fat + (i * (BLOCKSIZE / sizeof(int))), superblock.fat_start_block + i) == -1) {
              printf("Error reading FAT block %d\n", i);
              free(fat);
              close(vs_fd);
@@ -185,16 +187,16 @@ int  vsmount (char *vdiskname)
      g_fat = malloc(fat_entries * sizeof(int));
 
      // load root directory from disk into memory
-     g_root_dir = malloc(sb.root_dir_blocks * BLOCKSIZE);
-     DirectoryEntry *root_dir = malloc(sb.root_dir_blocks * BLOCKSIZE);
+     g_root_dir = malloc(superblock.root_dir_blocks * BLOCKSIZE);
+     DirectoryEntry *root_dir = malloc(superblock.root_dir_blocks * BLOCKSIZE);
      if (root_dir == NULL) {
          printf("Error allocating memory for root directory\n");
          free(fat);
          close(vs_fd);
          return -1;
      }
-     for (int i = 0; i < sb.root_dir_blocks; ++i) {
-         if (read_block((char *)root_dir + (i * BLOCKSIZE), sb.root_dir_start_block + i) == -1) {
+     for (int i = 0; i < superblock.root_dir_blocks; ++i) {
+         if (read_block((char *)root_dir + (i * BLOCKSIZE), superblock.root_dir_start_block + i) == -1) {
              printf("Error reading root directory block %d\n", i);
              free(root_dir);
              free(fat);
@@ -240,7 +242,6 @@ int  vsmount (char *vdiskname)
 
  int vscreate(char *filename)
  {
-
      if (strlen(filename) >= 30) {
          printf("Error: Filename is too long\n");
          return -1;
@@ -249,6 +250,7 @@ int  vsmount (char *vdiskname)
      for (int i = 0; i < 128; i++) { // Assuming 128 directory entries
          if (g_root_dir[i].is_used == 0) {
              free_entry = i;
+//             printf("%d",free_entry);
              break;
          }
      }
@@ -280,6 +282,7 @@ int  vsmount (char *vdiskname)
      // Update the FAT to mark the block as used
      g_fat[free_block] = -1; // -1 or another non-zero value to indicate the block is used
 
+     printf("Success!!");
      return (0);
  }
 
