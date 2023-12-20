@@ -5,7 +5,6 @@
 #include "vsfs.h"
 #include <string.h>
 
-// globals  =======================================
 int vs_fd; // file descriptor of the Linux file that acts as virtual disk.
              // this is not visible to an application.
 typedef struct {
@@ -38,13 +37,7 @@ typedef struct {
 } OpenFileEntry;
 
 OpenFileEntry open_file_table[16];
-// ========================================================
 
-
-// read block k from disk (virtual disk) into buffer block.
-// size of the block is BLOCKSIZE.
-// space for block must be allocated outside of this function.
-// block numbers start from 0 in the virtual disk. 
 int read_block (void *block, int k)
 {
     int n;
@@ -77,10 +70,7 @@ int write_block (void *block, int k)
 }
 
 
-/**********************************************************************
-   The following functions are to be called by applications directly. 
-***********************************************************************/
-// this function is partially implemented.
+
 int vsformat (char *vdiskname, unsigned int m)
 {
     char command[1000];
@@ -89,7 +79,6 @@ int vsformat (char *vdiskname, unsigned int m)
     int count;
     size  = num << m;
     count = size / BLOCKSIZE;
-    //printf ("%d %d", m, size);
     sprintf (command, "dd if=/dev/zero of=%s bs=%d count=%d",
              vdiskname, BLOCKSIZE, count);
     printf ("executing command = %s\n", command);
@@ -145,9 +134,6 @@ int vsformat (char *vdiskname, unsigned int m)
 // this function is partially implemented.
 int  vsmount (char *vdiskname)
 {
-    // open the Linux file vdiskname and in this
-    // way make it ready to be used for other operations.
-    // vs_fd is global; hence other function can use it.
 
     vs_fd = open(vdiskname, O_RDWR);
 
@@ -202,7 +188,6 @@ int  vsmount (char *vdiskname)
 }
 
 
-// this function is partially implemented.
  int vsumount ()
  {
      if (vs_fd == -1) {
@@ -244,7 +229,6 @@ int  vsmount (char *vdiskname)
      for (int i = 0; i < 128; i++) { // Assuming 128 directory entries
          if (g_root_dir[i].is_used == 0) {
              free_entry = i;
-//             printf("%d",free_entry);
              break;
          }
      }

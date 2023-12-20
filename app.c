@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include "vsfs.h"
 
@@ -24,7 +23,6 @@ if (argc != 2) {
     strcpy (vdiskname, argv[1]);
 
     ret = vsmount (vdiskname);
-//    print_superblock(); // Print the contents of the superblock
 
 
     if (ret != 0) {
